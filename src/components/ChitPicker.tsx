@@ -30,7 +30,9 @@ import {
   X,
   Award,
   ArrowRight,
-  ExternalLink
+  ExternalLink,
+  Trash2,
+  Users
 } from 'lucide-react';
 import { Topic, Participant, Language, Category } from '../types';
 import { CATEGORY_LABELS } from '../data/defaultTopics';
@@ -49,6 +51,8 @@ interface ChitPickerProps {
   onStartTimerWithTopic: (topic: Topic, participant?: Participant | null) => void;
   onRegisterParticipant?: (participant: Participant) => void;
   onUpdateParticipantName?: (id: string, name: string, chestNo?: number) => void;
+  onDeleteParticipant?: (id: string) => void;
+  onClearAllParticipants?: () => void;
 }
 
 export const ChitPicker: React.FC<ChitPickerProps> = ({
@@ -61,19 +65,26 @@ export const ChitPicker: React.FC<ChitPickerProps> = ({
   onSelectParticipant,
   onStartTimerWithTopic,
   onRegisterParticipant,
-  onUpdateParticipantName
+  onUpdateParticipantName,
+  onDeleteParticipant,
+  onClearAllParticipants
 }) => {
   // Mode: wheel is primary default as requested by user
   const [pickerMode, setPickerMode] = useState<'wheel' | 'grid' | 'bowl'>('wheel');
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'unused' | 'used'>('all');
 
-  // Participant quick registration state
+  // Participant quick registration & management state
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+  const [isManageMembersModalOpen, setIsManageMembersModalOpen] = useState(false);
+  const [manageSearchTerm, setManageSearchTerm] = useState('');
   const [isAddingNewInline, setIsAddingNewInline] = useState(false);
   const [directSpeakerName, setDirectSpeakerName] = useState('');
   const [directChestNo, setDirectChestNo] = useState<number>(1);
   const [directSchool, setDirectSchool] = useState('');
   const [saveConfirmation, setSaveConfirmation] = useState(false);
+  const [confirmingDeleteCurrentSpeaker, setConfirmingDeleteCurrentSpeaker] = useState(false);
+  const [confirmingDeleteModalId, setConfirmingDeleteModalId] = useState<string | null>(null);
+  const [confirmingClearAll, setConfirmingClearAll] = useState(false);
 
   // Spin Wheel & Chit State
   const [wheelRotation, setWheelRotation] = useState(0);
@@ -360,7 +371,7 @@ export const ChitPicker: React.FC<ChitPickerProps> = ({
                 type="text"
                 value={directSchool}
                 onChange={(e) => setDirectSchool(e.target.value)}
-                placeholder={lang === 'kn' ? 'ಶಾಲೆ / ತರಗತಿ (ಐಚ್ಛಿಕ)' : 'School/Class'}
+                placeholder={lang === 'kn' ? 'ಸ್ಥಳ / ವಿಭಾಗ (ಐಚ್ಛಿಕ)' : 'Place / District'}
                 className="w-36 px-2.5 py-2 text-xs font-medium rounded-xl border border-stone-300 bg-stone-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 text-stone-700 hidden sm:block"
               />
 
@@ -398,10 +409,26 @@ export const ChitPicker: React.FC<ChitPickerProps> = ({
           {/* B. DROPDOWN SELECTION */}
           <div className="lg:col-span-5 bg-white rounded-2xl p-3.5 sm:p-4 border-2 border-amber-300 shadow-2xs flex flex-col justify-between">
             <div>
-              <label className="text-xs font-bold text-amber-900 font-serif-kannada flex items-center justify-between mb-1.5">
-                <span>{lang === 'kn' ? 'ಸ್ಪರ್ಧಿಗಳ ಆಯ್ಕೆ ಪಟ್ಟಿ:' : 'Speakers Selection List:'}</span>
-                <span className="text-[11px] text-amber-700 font-mono">({participants.length} ಸ್ಪರ್ಧಿಗಳು)</span>
-              </label>
+              <div className="flex items-center justify-between mb-1.5 flex-wrap gap-1">
+                <label className="text-xs font-bold text-amber-900 font-serif-kannada flex items-center gap-1">
+                  <Users className="w-3.5 h-3.5 text-amber-700" />
+                  <span>{lang === 'kn' ? 'ಸ್ಪರ್ಧಿಗಳ ಆಯ್ಕೆ ಪಟ್ಟಿ:' : 'Speakers Selection List:'}</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-amber-700 font-mono font-bold">({participants.length})</span>
+                  {participants.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setIsManageMembersModalOpen(true)}
+                      className="text-[11px] font-bold text-rose-700 hover:text-rose-900 hover:underline flex items-center gap-0.5 bg-rose-50 px-2 py-0.5 rounded border border-rose-200"
+                      title={lang === 'kn' ? 'ಸದಸ್ಯರನ್ನು ವೀಕ್ಷಿಸಿ / ತೆಗೆದುಹಾಕಿ' : 'Manage & Remove Members'}
+                    >
+                      <Trash2 className="w-3 h-3 text-rose-600" />
+                      <span>{lang === 'kn' ? 'ಸದಸ್ಯರ ಪಟ್ಟಿ / ಡಿಲೀಟ್' : 'Manage / Remove'}</span>
+                    </button>
+                  )}
+                </div>
+              </div>
 
               <select
                 id="active-participant-select"
@@ -442,21 +469,60 @@ export const ChitPicker: React.FC<ChitPickerProps> = ({
 
             {/* Current Active Speaker pill */}
             {currentParticipant ? (
-              <div className="mt-2 p-2 rounded-xl bg-amber-50 border border-amber-300 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-md bg-amber-700 text-white font-bold text-xs flex items-center justify-center font-mono">
+              <div className="mt-2 p-2 rounded-xl bg-amber-50 border border-amber-300 flex items-center justify-between text-xs gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-6 h-6 rounded-md bg-amber-700 text-white font-bold text-xs flex items-center justify-center font-mono shrink-0">
                     #{currentParticipant.chestNo}
                   </span>
-                  <div>
+                  <div className="truncate">
                     <span className="font-bold text-stone-900 font-serif-kannada">{currentParticipant.name}</span>
                     {currentParticipant.schoolOrClass && (
                       <span className="text-stone-500 ml-1 text-[11px]">({currentParticipant.schoolOrClass})</span>
                     )}
                   </div>
                 </div>
-                <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-300">
-                  {lang === 'kn' ? 'ಸಿದ್ಧ' : 'Ready'}
-                </span>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-300">
+                    {lang === 'kn' ? 'ಸಿದ್ಧ' : 'Ready'}
+                  </span>
+                  {onDeleteParticipant && (
+                    confirmingDeleteCurrentSpeaker ? (
+                      <div className="flex items-center gap-1 animate-in fade-in">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onDeleteParticipant(currentParticipant.id);
+                            setConfirmingDeleteCurrentSpeaker(false);
+                          }}
+                          className="px-2 py-0.5 rounded-lg bg-rose-700 text-white text-[11px] font-bold transition flex items-center gap-1 shadow-2xs"
+                          title={lang === 'kn' ? 'ಖಚಿತವಾಗಿ ತೆಗೆದುಹಾಕಿ' : 'Confirm remove'}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>{lang === 'kn' ? 'ಖಚಿತ (Delete)' : 'Confirm'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmingDeleteCurrentSpeaker(false)}
+                          className="px-1.5 py-0.5 rounded-lg bg-stone-200 text-stone-700 text-[11px] font-bold"
+                          title={lang === 'kn' ? 'ರದ್ದುಮಾಡಿ' : 'Cancel'}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setConfirmingDeleteCurrentSpeaker(true)}
+                        className="px-2 py-0.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-800 text-[11px] font-bold border border-rose-300 transition flex items-center gap-1 shadow-2xs"
+                        title={lang === 'kn' ? 'ಈ ಸದಸ್ಯರನ್ನು ತೆಗೆದುಹಾಕಿ' : 'Remove this member'}
+                      >
+                        <Trash2 className="w-3 h-3 text-rose-700" />
+                        <span>{lang === 'kn' ? 'ತೆಗೆದುಹಾಕಿ' : 'Remove'}</span>
+                      </button>
+                    )
+                  )}
+                </div>
               </div>
             ) : (
               <div className="mt-2 text-[11px] text-stone-500 italic">
@@ -1054,7 +1120,199 @@ export const ChitPicker: React.FC<ChitPickerProps> = ({
             if (onRegisterParticipant) onRegisterParticipant(p);
             onSelectParticipant(p);
           }}
+          onDeleteParticipant={onDeleteParticipant}
         />
+      )}
+
+      {/* Manage / Remove Members Modal */}
+      {isManageMembersModalOpen && (
+        <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5">
+          <div className="bg-white rounded-3xl max-w-2xl w-full border-2 border-amber-300 shadow-2xl overflow-hidden flex flex-col max-h-[88vh] animate-in zoom-in-95">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-amber-700 via-amber-800 to-amber-950 p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20">
+                  <Users className="w-5 h-5 text-amber-200" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black font-serif-kannada leading-tight text-white">
+                    {lang === 'kn' ? 'ನೋಂದಾಯಿತ ಸದಸ್ಯರ ಪಟ್ಟಿ & ನಿರ್ವಹಣೆ' : 'Registered Members Management'}
+                  </h3>
+                  <p className="text-xs text-amber-200">
+                    {lang === 'kn' 
+                      ? `ಒಟ್ಟು ${participants.length} ಸ್ಪರ್ಧಿಗಳು • ಅನಗತ್ಯ ಸದಸ್ಯರನ್ನು ಸುಲಭವಾಗಿ ತೆಗೆದುಹಾಕಿ` 
+                      : `Total ${participants.length} speakers • Easily remove or manage members`}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsManageMembersModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-black/20 hover:bg-black/30 flex items-center justify-center transition text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Toolbar */}
+            <div className="p-3 sm:p-4 bg-stone-50 border-b border-stone-200 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+              <div className="relative flex-1 min-w-[200px]">
+                <input
+                  type="text"
+                  placeholder={lang === 'kn' ? 'ಹೆಸರು ಅಥವಾ ಚೆಸ್ಟ್ ಸಂಖ್ಯೆ ಹುಡುಕಿ...' : 'Search by name or chest #...'}
+                  value={manageSearchTerm}
+                  onChange={(e) => setManageSearchTerm(e.target.value)}
+                  className="w-full px-3 py-1.5 text-xs rounded-xl border border-stone-300 focus:outline-none focus:ring-1 focus:ring-amber-500 bg-white"
+                />
+              </div>
+
+              {participants.length > 0 && onClearAllParticipants && (
+                confirmingClearAll ? (
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClearAllParticipants();
+                        setConfirmingClearAll(false);
+                        setIsManageMembersModalOpen(false);
+                      }}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-700 text-white transition flex items-center gap-1 shadow-xs"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>{lang === 'kn' ? 'ಖಚಿತ (ಎಲ್ಲರನ್ನೂ ತೆರವುಗೊಳಿಸಿ)' : 'Confirm Clear All'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmingClearAll(false)}
+                      className="px-2 py-1.5 rounded-xl text-xs font-bold bg-stone-200 text-stone-700"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingClearAll(true)}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition flex items-center gap-1"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                    <span>{lang === 'kn' ? 'ಎಲ್ಲರನ್ನೂ ತೆರವುಗೊಳಿಸಿ' : 'Clear All Members'}</span>
+                  </button>
+                )
+              )}
+            </div>
+
+            {/* Members List */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
+              {participants.length === 0 ? (
+                <div className="text-center py-10 text-stone-500 text-xs sm:text-sm">
+                  <Users className="w-10 h-10 text-stone-300 mx-auto mb-2" />
+                  <p>{lang === 'kn' ? 'ಯಾವುದೇ ಸ್ಪರ್ಧಿಗಳು ನೋಂದಾಯಿತವಾಗಿಲ್ಲ.' : 'No participants registered yet.'}</p>
+                </div>
+              ) : (
+                (() => {
+                  const filtered = participants.filter(p => 
+                    p.name.toLowerCase().includes(manageSearchTerm.toLowerCase()) ||
+                    p.schoolOrClass.toLowerCase().includes(manageSearchTerm.toLowerCase()) ||
+                    p.chestNo.toString().includes(manageSearchTerm)
+                  );
+
+                  if (filtered.length === 0) {
+                    return (
+                      <div className="text-center py-8 text-stone-500 text-xs">
+                        {lang === 'kn' ? 'ಯಾವುದೇ ಸ್ಪರ್ಧಿ ಕಂಡುಬಂದಿಲ್ಲ.' : 'No matching members found.'}
+                      </div>
+                    );
+                  }
+
+                  return filtered.map(p => (
+                    <div
+                      key={p.id}
+                      className="bg-white p-3 rounded-2xl border border-stone-200 hover:border-amber-300 flex items-center justify-between gap-3 transition shadow-2xs"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="w-8 h-8 rounded-xl bg-amber-100 text-amber-900 font-bold font-mono text-xs flex items-center justify-center shrink-0">
+                          #{p.chestNo}
+                        </span>
+                        <div className="min-w-0">
+                          <h4 className="font-bold text-stone-900 text-sm font-serif-kannada truncate">
+                            {p.name}
+                          </h4>
+                          <p className="text-xs text-stone-500 truncate">
+                            {p.schoolOrClass}
+                            {p.assignedTopic && (
+                              <span className="ml-2 text-amber-800 font-medium">
+                                • {lang === 'kn' ? 'ವಿಷಯ:' : 'Topic:'} #{p.assignedTopic.number}
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectParticipant(p);
+                            setIsManageMembersModalOpen(false);
+                          }}
+                          className="px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold border border-amber-200 transition"
+                        >
+                          {lang === 'kn' ? 'ಆರಿಸಿ' : 'Select'}
+                        </button>
+
+                        {onDeleteParticipant && (
+                          confirmingDeleteModalId === p.id ? (
+                            <div className="flex items-center gap-1 animate-in fade-in">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  onDeleteParticipant(p.id);
+                                  setConfirmingDeleteModalId(null);
+                                }}
+                                className="px-2 py-1 rounded-xl bg-rose-600 text-white text-xs font-bold transition flex items-center gap-1 shadow-2xs"
+                                title={lang === 'kn' ? 'ಖಚಿತವಾಗಿ ತೆಗೆದುಹಾಕಿ' : 'Confirm remove'}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>{lang === 'kn' ? 'ಖಚಿತ' : 'Delete'}</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setConfirmingDeleteModalId(null)}
+                                className="px-1.5 py-1 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setConfirmingDeleteModalId(p.id)}
+                              className="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition"
+                              title={lang === 'kn' ? 'ತೆಗೆದುಹಾಕಿ' : 'Remove Member'}
+                            >
+                              <Trash2 className="w-4 h-4 text-rose-600" />
+                            </button>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  ));
+                })()
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-3 sm:p-4 bg-stone-50 border-t border-stone-200 flex justify-end shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsManageMembersModalOpen(false)}
+                className="px-5 py-2 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-bold transition"
+              >
+                {lang === 'kn' ? 'ಮುಚ್ಚಿ (Close)' : 'Close'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
     </div>

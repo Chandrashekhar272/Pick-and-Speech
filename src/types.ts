@@ -1,6 +1,6 @@
 export type Language = 'kn' | 'en';
 
-export type NavigationTab = 'pick' | 'timer' | 'judges' | 'admin';
+export type NavigationTab = 'pick' | 'timer' | 'judges' | 'admin' | 'certificates';
 
 export type Category = 
   | 'leaders'       // ರಾಷ್ಟ್ರೀಯ ನಾಯಕರು & ಮಹಾಪುರುಷರು
@@ -12,6 +12,25 @@ export type Category =
   | 'current';      // ಸಮಕಾಲೀನ & ಸಾಮಾನ್ಯ ಜ್ಞಾನ
 
 export type DifficultyLevel = 'primary' | 'highschool' | 'open';
+
+export type CertificateTheme = 'gold' | 'silver' | 'bronze' | 'green';
+
+export interface CertificateSignatory {
+  id: string;
+  name: string;
+  nameKn: string;
+  role: string;
+  roleKn: string;
+  designation: string;
+  designationKn: string;
+  signatureImage?: string; // Data URL for uploaded or drawn signature
+}
+
+export interface CertificateConfig {
+  schoolName: string;
+  eventDate: string;
+  signatories: CertificateSignatory[];
+}
 
 export interface Topic {
   id: string;

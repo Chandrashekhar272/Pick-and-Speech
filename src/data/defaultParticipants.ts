@@ -1,82 +1,60 @@
 import { Participant } from '../types';
 
-export const DEFAULT_50_PARTICIPANTS: Participant[] = [
-  { id: 'p-1', chestNo: 1, name: 'ಸ್ಪಂದನಾ ಗೌಡ', schoolOrClass: 'ಮೈಸೂರು' },
-  { id: 'p-2', chestNo: 2, name: 'ರೋಹನ್ ಕುಮಾರ್', schoolOrClass: 'ಮೈಸೂರು' },
-  { id: 'p-3', chestNo: 3, name: 'ಪ್ರಕೃತಿ ಹೆಗಡೆ', schoolOrClass: 'ಶಿವಮೊಗ್ಗ' },
-  { id: 'p-4', chestNo: 4, name: 'ಕಿರಣ್ ಮೈಲಾರ', schoolOrClass: 'ಹಾವೇರಿ' },
-  { id: 'p-5', chestNo: 5, name: 'ಅನುಪಮಾ ದೇಶಪಾಂಡೆ', schoolOrClass: 'ಧಾರವಾಡ' },
-  { id: 'p-6', chestNo: 6, name: 'ಚೇತನ್ ನಾಯಕ್', schoolOrClass: 'ಕಾರವಾರ' },
-  { id: 'p-7', chestNo: 7, name: 'ಭಾವನಾ ರಾವ್', schoolOrClass: 'ಬೆಂಗಳೂರು' },
-  { id: 'p-8', chestNo: 8, name: 'ಸಮರ್ಥ್ ಜೋಶಿ', schoolOrClass: 'ಬೆಳಗಾವಿ' },
-  { id: 'p-9', chestNo: 9, name: 'ವರ್ಷಾ ಕುಲಕರ್ಣಿ', schoolOrClass: 'ವಿಜಯಪುರ' },
-  { id: 'p-10', chestNo: 10, name: 'ಮನೋಜ್ ಕುಮಾರ್', schoolOrClass: 'ಮಂಡ್ಯ' },
-  { id: 'p-11', chestNo: 11, name: 'ದೀಕ್ಷಾ ಶೆಟ್ಟಿ', schoolOrClass: 'ಮಂಗಳೂರು' },
-  { id: 'p-12', chestNo: 12, name: 'ಪ್ರಜ್ವಲ್ ಕಂಬಳಿ', schoolOrClass: 'ಗದಗ' },
-  { id: 'p-13', chestNo: 13, name: 'ಪ್ರೀತಿ ಕಟ್ಟಿಮನಿ', schoolOrClass: 'ಕಲಬುರಗಿ' },
-  { id: 'p-14', chestNo: 14, name: 'ಅಭಿಷೇಕ್ ಭಟ್', schoolOrClass: 'ಉಡುಪಿ' },
-  { id: 'p-15', chestNo: 15, name: 'ಸ್ನೇಹಾ ಪಾಟೀಲ್', schoolOrClass: 'ಬಾಗಲಕೋಟೆ' },
-  { id: 'p-16', chestNo: 16, name: 'ಆಕಾಶ್ ಹಿರೇಮಠ', schoolOrClass: 'ದಾವಣಗೆರೆ' },
-  { id: 'p-17', chestNo: 17, name: 'ಕಾವ್ಯಾ ನಂಜುಂಡಸ್ವಾಮಿ', schoolOrClass: 'ಚಾಮರಾಜನಗರ' },
-  { id: 'p-18', chestNo: 18, name: 'ರಾಕೇಶ್ ಪೂಜಾರಿ', schoolOrClass: 'ಕುಂದಾಪುರ' },
-  { id: 'p-19', chestNo: 19, name: 'ಮೇಘನಾ ರೆಡ್ಡಿ', schoolOrClass: 'ಬಳ್ಳಾರಿ' },
-  { id: 'p-20', chestNo: 20, name: 'ಶಶಾಂಕ್ ಗೌಡ', schoolOrClass: 'ಹಾಸನ' },
-  { id: 'p-21', chestNo: 21, name: 'ಅನನ್ಯ ಭರದ್ವಾಜ್', schoolOrClass: 'ತುಮಕೂರು' },
-  { id: 'p-22', chestNo: 22, name: 'ವಿನಾಯಕ್ ಕುಲಕರ್ಣಿ', schoolOrClass: 'ಕೊಪ್ಪಳ' },
-  { id: 'p-23', chestNo: 23, name: 'ಸಿಂಚನಾ ಹೆಬ್ಬಾರ್', schoolOrClass: 'ಚಿಕ್ಕಮಗಳೂರು' },
-  { id: 'p-24', chestNo: 24, name: 'ನಿಖಿಲ್ ಕಾಮತ್', schoolOrClass: 'ಶಿರಸಿ' },
-  { id: 'p-25', chestNo: 25, name: 'ತೇಜಸ್ವಿನಿ ಮಠಪತಿ', schoolOrClass: 'ರಾಯಚೂರು' },
-  { id: 'p-26', chestNo: 26, name: 'ಸೂರ್ಯಪ್ರಕಾಶ್', schoolOrClass: 'ಕೋಲಾರ' },
-  { id: 'p-27', chestNo: 27, name: 'ಪೂಜಾ ಚಕ್ರವರ್ತಿ', schoolOrClass: 'ಚಿಕ್ಕಬಳ್ಳಾಪುರ' },
-  { id: 'p-28', chestNo: 28, name: 'ಸಂದೀಪ್ ಗೌಡ', schoolOrClass: 'ರಾಮನಗರ' },
-  { id: 'p-29', chestNo: 29, name: 'ಲಾವಣ್ಯ ದೇವಾಡಿಗ', schoolOrClass: 'ಭಟ್ಕಳ' },
-  { id: 'p-30', chestNo: 30, name: 'ಗುರುದತ್ತ ನಾಯಕ', schoolOrClass: 'ಚಿತ್ರದುರ್ಗ' },
-  { id: 'p-31', chestNo: 31, name: 'ದಿವ್ಯಾ ಕಾರಂತ', schoolOrClass: 'ಕೋಟ' },
-  { id: 'p-32', chestNo: 32, name: 'ಹರ್ಷಿತ್ ಕುಮಾರ್', schoolOrClass: 'ಮಡಿಕೇರಿ' },
-  { id: 'p-33', chestNo: 33, name: 'ಯಶಸ್ವಿನಿ ಸೋಮಶೇಖರ್', schoolOrClass: 'ತಿಪಟೂರು' },
-  { id: 'p-34', chestNo: 34, name: 'ಭರತ್ ಕಲ್ಲೂರು', schoolOrClass: 'ಯಾದಗಿರಿ' },
-  { id: 'p-35', chestNo: 35, name: 'ಕೀರ್ತನಾ ಆಚಾರ್ಯ', schoolOrClass: 'ಕಾರ್ಕಳ' },
-  { id: 'p-36', chestNo: 36, name: 'ನವೀನ್ ಆಲೂರು', schoolOrClass: 'ರೋಣ' },
-  { id: 'p-37', chestNo: 37, name: 'ರೂಪಾ ಬಂಡಿವಡ್ಡರ', schoolOrClass: 'ಇಳಕಲ್' },
-  { id: 'p-38', chestNo: 38, name: 'ಪ್ರಮೋದ್ ಮುಧೋಳ', schoolOrClass: 'ಮುಧೋಳ' },
-  { id: 'p-39', chestNo: 39, name: 'ರಶ್ಮಿ ಕುಂದರಗಿ', schoolOrClass: 'ಜಮಖಂಡಿ' },
-  { id: 'p-40', chestNo: 40, name: 'ಚಂದನ್ ನಾಗಪ್ಪ', schoolOrClass: 'ಹೊಸಪೇಟೆ' },
-  { id: 'p-41', chestNo: 41, name: 'ಐಶ್ವರ್ಯಾ ಬಣಕಾರ', schoolOrClass: 'ರಾಣೆಬೆನ್ನೂರು' },
-  { id: 'p-42', chestNo: 42, name: 'ದರ್ಶನ್ ಕುಮಾರ್', schoolOrClass: 'ಸಕಲೇಶಪುರ' },
-  { id: 'p-43', chestNo: 43, name: 'ಪಲ್ಲವಿ ನಾಯಕ್', schoolOrClass: 'ಕುಮಟಾ' },
-  { id: 'p-44', chestNo: 44, name: 'ಮಂಜುನಾಥ್ ಹಡಪದ', schoolOrClass: 'ಬಸವಕಲ್ಯಾಣ' },
-  { id: 'p-45', chestNo: 45, name: 'ಸೌಮ್ಯ ಹಿರೇಮಠ', schoolOrClass: 'ಸಿಂಧನೂರು' },
-  { id: 'p-46', chestNo: 46, name: 'ಗಣೇಶ್ ಪ್ರಭು', schoolOrClass: 'ಬಂಟ್ವಾಳ' },
-  { id: 'p-47', chestNo: 47, name: 'ವಿದ್ಯಾಶ್ರೀ ಮಣೂರ', schoolOrClass: 'ಅಫಜಲಪುರ' },
-  { id: 'p-48', chestNo: 48, name: 'ಕಾರ್ತಿಕ್ ಬಡಿಗೇರ', schoolOrClass: 'ಹುಬ್ಬಳ್ಳಿ' },
-  { id: 'p-49', chestNo: 49, name: 'ಸ್ವಾತಿ ಬೆಳ್ಳಾರೆ', schoolOrClass: 'ಪುತ್ತೂರು' },
-  { id: 'p-50', chestNo: 50, name: 'ವಿಜಯಕುಮಾರ್ ಪಾಟೀಲ', schoolOrClass: 'ಗೋಕಾಕ' }
-].map((p, idx) => ({
-  ...p,
-  status: idx < 3 ? 'completed' : 'waiting',
-  scores: idx === 0 ? {
-    content: 10,
-    language: 10,
-    presentation: 10,
-    timeManagement: 9,
-    impact: 10,
-    total: 49,
-    remarks: 'ಅದ್ಭುತ ವಾಕ್ಚಾತುರ್ಯ, ಕರ್ನಾಟಕ ಗತವೈಭವದ ಆಳವಾದ ಜ್ಞಾನ ಮತ್ತು ಶ್ರೇಷ್ಠ ಭಾಷಣ ಶೈಲಿ.'
-  } : idx === 1 ? {
-    content: 9,
-    language: 9,
-    presentation: 9,
-    timeManagement: 10,
-    impact: 9,
-    total: 46,
-    remarks: 'ಸ್ಪಷ್ಟ ಉಚ್ಚಾರಣೆ, ಸಮಯಪ್ರಜ್ಞೆ ಮತ್ತು ಆಕರ್ಷಕ ವಿಷಯ ಮಂಡನೆ.'
-  } : idx === 2 ? {
-    content: 9,
-    language: 8,
-    presentation: 9,
-    timeManagement: 9,
-    impact: 9,
-    total: 44,
-    remarks: 'ಉತ್ತಮ ಚಿಂತನೆ ಹಾಗೂ ಆತ್ಮವಿಶ್ವಾಸದ ಮಾತುಗಾರಿಕೆ.'
-  } : undefined
-}));
+export function deduplicateParticipants(list: Participant[]): Participant[] {
+  const seenChests = new Set<number>();
+  const seenIds = new Set<string>();
+  const result: Participant[] = [];
+
+  for (const p of list) {
+    if (!p) continue;
+    const chest = p.chestNo;
+    const id = p.id;
+    if (chest !== undefined && seenChests.has(chest)) {
+      continue;
+    }
+    if (id && seenIds.has(id)) {
+      continue;
+    }
+    if (chest !== undefined) seenChests.add(chest);
+    if (id) seenIds.add(id);
+    result.push(p);
+  }
+
+  return result.sort((a, b) => a.chestNo - b.chestNo);
+}
+
+export const DEFAULT_31_PARISHATH_PARTICIPANTS: Participant[] = [
+  { id: "p-1790500853990-uzmn", chestNo: 1, name: "1) ವಿದ್ಯಾವತಿ ಮಳೆಮಠ", schoolOrClass: "( TLM & ಚಿತ್ರಕಲಾ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790503137868-fesv", chestNo: 2, name: "2) ಶೆಟ್ಟಿ ಆಶಾ", schoolOrClass: "( ಮಕ್ಕಳ ಸಮಗ್ರ ವಿಕಾಸ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790503168370-gkqx", chestNo: 3, name: "3) ಕಸಪ್ಪ ಹಡಗಲಿ", schoolOrClass: "( ಸಮಾಜ ಸೇವೆ ಮತ್ತು ಆರೋಗ್ಯ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790503211796-ytmz", chestNo: 4, name: "4) ಏನ್ ಬಿ ಸಜ್ಜನ", schoolOrClass: "(ನಿರೂಪಕರು & ಭಾಷಣಕಾರರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790503285834-dimj", chestNo: 5, name: "5)ಪಾರ್ವತಿ ಬಿ ಎ", schoolOrClass: "( ಮಹಿಳಾ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790503329497-l3kx", chestNo: 6, name: "6) ರತ್ನಮ್ಮ ಡಿ", schoolOrClass: "( ಮಕ್ಕಳ ಸಮಗ್ರ ವಿಕಾಸ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790649715082-dsr4", chestNo: 7, name: "7) ಶ್ರೀಮತಿ ಆರ್ ಎಸ್ ಪಾಟೀಲ", schoolOrClass: "(ಮಕ್ಕಳ ಸಮಗ್ರ ವಿಕಾಸ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790649750021-9gxz", chestNo: 8, name: "8) ಶ್ರೀಮತಿ ಸರೋಜಮ್ಮ", schoolOrClass: "( ಮಹಿಳಾ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790649791339-cht1", chestNo: 9, name: "9) ಶ್ರೀಮತಿ ಸುಧಾ ಕೆ", schoolOrClass: "(ಕಲಾವಿದ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790649830069-feqp", chestNo: 10, name: "10) ಶ್ರೀಮತಿ ತಿಮ್ಮರಾಜು ಏನ್ ಎಮ್", schoolOrClass: "( ತಾಂತ್ರಿಕ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650013808-7jlu", chestNo: 11, name: "11) ಶ್ರೀಮತಿ ಲತಾ ಸಜ್ಜಗಾರ", schoolOrClass: "( ಮಹಿಳಾ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650056876-2118", chestNo: 12, name: "12) ಶ್ರೀಮತಿ ಅನ್ನಪೂರ್ಣ M V", schoolOrClass: "( TLM & ಚಿತ್ರಕಲಾ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650102415-5bce", chestNo: 13, name: "13) ಶ್ರೀಮತಿ ಮುದುಕಾಂಬಿ ಅಲ್ಲಸಾಬ ಬಾಗೇವಾಡಿ", schoolOrClass: "(ಕಲಾವಿದ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650142024-gxdt", chestNo: 14, name: "14) ಶ್ರೀಮತಿ ಶ್ವೇತಾ ಹೆಗಡೆ", schoolOrClass: "(ತಾಂತ್ರಿಕ ಶಿಕ್ಷಕರ ಸಮಿತಿ)", status: "waiting", judgeScores: {} },
+  { id: "p-1790650168213-uqh5", chestNo: 15, name: "15)ಶ್ರೀಮತಿ ಶೈಲಜಾ K V", schoolOrClass: "(ಸಂಗೀತ ಮತ್ತು ಗಾಯನ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650202789-mdx5", chestNo: 16, name: "16)ಶ್ರೀ ಶೋಭಾ S ನಾಯಕ", schoolOrClass: "( ಸಮಾಜ ಸೇವೆ ಮತ್ತು ಆರೋಗ್ಯ ಶಿಕ್ಷಣ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650229638-uvvv", chestNo: 17, name: "17)ಶ್ರೀ ಮಂಜುನಾಥ ಟಿ ಪಿ", schoolOrClass: "(ಸಮಾಜಸೇವೆ ಮತ್ತು ಆರೋಗ್ಯ ಶಿಕ್ಷಣ ಸಮಿತಿ)", status: "waiting", judgeScores: {} },
+  { id: "p-1790650347346-1jr4", chestNo: 18, name: "18)ಶ್ರೀಮತಿ ಮಂಜುಳ ಎಂ. ಸಿ.", schoolOrClass: "(ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ)", status: "waiting", judgeScores: {} },
+  { id: "p-1790650374852-gqwt", chestNo: 19, name: "19)ಶ್ರೀಮತಿ ಶಿವಮ್ಮ ಎಸ್. ಜಿ", schoolOrClass: "(ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ)", status: "waiting", judgeScores: {} },
+  { id: "p-1790650406367-zki8", chestNo: 20, name: "20)ಶ್ರೀ ಎಂ. ಬಿ. ಪವಾಡಶೆಟ್ಟರ", schoolOrClass: "(ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ)", status: "waiting", judgeScores: {} },
+  { id: "p-1790650436568-6hvg", chestNo: 21, name: "21)ಶ್ರೀಮತಿ ಶಬೀನ", schoolOrClass: "(ಮಹಿಳಾ ಶಿಕ್ಷಕಿಯರ ಸಮಿತಿ)", status: "waiting", judgeScores: {} },
+  { id: "p-1790650470712-dzga", chestNo: 22, name: "22)ಶ್ರೀ ಶ್ರೀಶೈಲ ಮನಗತ್ತಿ", schoolOrClass: "(ನಿರೂಪಕರು ಮತ್ತು ಭಾಷಣಕಾರರ ಸಮಿತಿ)", status: "waiting", judgeScores: {} },
+  { id: "p-1790650499374-mz43", chestNo: 23, name: "23)ಶ್ರೀಮತಿ ಎಸ್. ಎ ಸಂಕೇಶ್ವರ್", schoolOrClass: "(ಮಕ್ಕಳ ಸಮಗ್ರ ವಿಕಾಸ ಶಿಕ್ಷಕರ ಸಮಿತಿ)", status: "waiting", judgeScores: {} },
+  { id: "p-1790650523318-chii", chestNo: 24, name: "24)ಶ್ರೀ ರಮೇಶ ಎಂ.", schoolOrClass: "(ಮಕ್ಕಳ ಸಮಗ್ರ ವಿಕಾಸ ಶಿಕ್ಷಕರ ಸಮಿತಿ)", status: "waiting", judgeScores: {} },
+  { id: "p-1790650556522-i8lg", chestNo: 25, name: "25) ಶ್ರೀಮತಿ ತನುಜಾ ಬಿ ನಾಯಕ್.", schoolOrClass: "(ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ)", status: "waiting", judgeScores: {} },
+  { id: "p-1790650595447-olpt", chestNo: 26, name: "26) ಶ್ರೀಮತಿ ಶೋಭಾ N G", schoolOrClass: "( ತಾಂತ್ರಿಕ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650626227-8pt3", chestNo: 27, name: "27) ಶ್ರೀಮತಿ ನಾಗಮಣಿ S", schoolOrClass: "( ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650647550-fguq", chestNo: 28, name: "28) ಶ್ರೀಮತಿ ರತ್ನ ರಾಯಚೂರುಕರ್", schoolOrClass: "(ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650673072-xins", chestNo: 29, name: "29)ಶ್ರೀ ಆನಂದತೀರ್ಥ ರಾ ಜೋಶಿ", schoolOrClass: "( ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650700220-w8xc", chestNo: 30, name: "30)  ಶ್ರೀಮತಿ  ಸುಮಾರಾಣಿ", schoolOrClass: "( ಕಲಾವಿದ ಶಿಕ್ಷಕರ ಸಮಿತಿ )", status: "waiting", judgeScores: {} },
+  { id: "p-1790650730968-fdn9", chestNo: 31, name: "31) ಶ್ರೀಮತಿ ಸವಿತಾ S G", schoolOrClass: "( TLM ಸಮಿತಿ )", status: "waiting", judgeScores: {} }
+];
+
+export const DEFAULT_50_PARTICIPANTS: Participant[] = DEFAULT_31_PARISHATH_PARTICIPANTS;

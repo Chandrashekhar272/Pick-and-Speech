@@ -12,8 +12,11 @@ import { JudgesPortal } from './components/JudgesPortal';
 import { AdminPortal } from './components/AdminPortal';
 import { ScorecardModal } from './components/ScorecardModal';
 import { StageModeModal } from './components/StageModeModal';
+import { CertificatePortal } from './components/CertificatePortal';
+import { ResetCompetitionModal } from './components/ResetCompetitionModal';
 import { DEFAULT_TOPICS } from './data/defaultTopics';
-import { DEFAULT_50_PARTICIPANTS } from './data/defaultParticipants';
+import { DEFAULT_50_PARTICIPANTS, DEFAULT_31_PARISHATH_PARTICIPANTS, deduplicateParticipants } from './data/defaultParticipants';
+import { DEFAULT_SIGNATORIES } from './data/defaultSignatories';
 import { 
   Topic, 
   Participant, 
@@ -22,15 +25,29 @@ import {
   JudgeScore, 
   Category, 
   DifficultyLevel,
-  NavigationTab
+  NavigationTab,
+  CertificateSignatory
 } from './types';
 import { sound } from './utils/audio';
+import { 
+  useLiveSync, 
+  resetScoresOnServer, 
+  syncParticipantsToServer, 
+  syncCurrentSpeakerToServer,
+  deleteParticipantOnServer, 
+  recordDeletedParticipantId,
+  CHIEF_ADMIN_PASSWORD
+} from './utils/onlineSync';
+import { sanitizeCertificateText } from './utils/certificatePdf';
 
 const STORAGE_KEY_TOPICS = 'pick_and_speech_topics_v4';
-const STORAGE_KEY_PARTICIPANTS = 'parishath_registered_participants_v3';
+const STORAGE_KEY_PARTICIPANTS = 'parishath_registered_participants_v5';
 const STORAGE_KEY_CONFIG = 'parishath_timer_config_v4';
 const STORAGE_KEY_SCHOOL = 'pick_and_speech_school_name_v1';
 const STORAGE_KEY_LANG = 'pick_and_speech_lang_v1';
+const STORAGE_KEY_SIGNATORIES = 'pick_and_speech_signatories_v2';
+const STORAGE_KEY_SIGNATORIES_LOCKED = 'pick_and_speech_signatories_locked_v2';
+const STORAGE_KEY_COMPETITION_CLOSED = 'parishath_competition_closed_v1';
 
 export default function App() {
   // 1. Language state: defaults to Kannada (kn)
@@ -41,13 +58,20 @@ export default function App() {
 
   // 2. School / Venue Name
   const [schoolName, setSchoolName] = useState<string>(() => {
-    return localStorage.getItem(STORAGE_KEY_SCHOOL) || 'ಮೈಸೂರು ನಗರ ಕೇಂದ್ರ - ಸಹಕಾರ ಭವನ ಸಭಾಂಗಣ (Mysuru)';
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_SCHOOL);
+      if (saved) {
+        const cleaned = sanitizeCertificateText(saved);
+        if (cleaned && cleaned.length > 2) return cleaned;
+      }
+    } catch {}
+    return 'ಕರ್ನಾಟಕ ರಾಜ್ಯ ಶಿಕ್ಷಕರ ಪ್ರತಿಭಾ ಪರಿಷತ್ (ರಿ) ಮೈಸೂರು';
   });
 
   // 3. Sound status
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
 
-  // 4. Active Tab: 'pick' | 'timer' | 'judges' | 'admin'
+  // 4. Active Tab: 'pick' | 'timer' | 'judges' | 'certificates' | 'admin'
   const [activeTab, setActiveTab] = useState<NavigationTab>('pick');
 
   // 5. Topics Bank
@@ -64,19 +88,54 @@ export default function App() {
     return DEFAULT_TOPICS;
   });
 
-  // 6. Participants: starts with ZERO (0) until user registers names
+  // 6. Participants: starts with registered 31 Parishath teachers
   const [participants, setParticipants] = useState<Participant[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_PARTICIPANTS);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return deduplicateParticipants(parsed);
+        }
       }
     } catch {
       // fallback
     }
-    return [];
+    return DEFAULT_31_PARISHATH_PARTICIPANTS;
   });
+
+  // 7. Six Official Signatories (Tandada Nayakaru, Mukhyastharu, Margadarshakaru, Sahakar Samiti, Rajya Tantrika Vibhaga, Samsthapaka Rajyadhyaksharu)
+  const [signatories, setSignatories] = useState<CertificateSignatory[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_SIGNATORIES);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // fallback
+    }
+    return DEFAULT_SIGNATORIES;
+  });
+
+  // Certificate Signatures Lock state: Default to true as user requested "lock madibidu"
+  const [isSignaturesLocked, setIsSignaturesLocked] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_SIGNATORIES_LOCKED);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    } catch {
+      // fallback
+    }
+    return true; // Default locked as requested
+  });
+
+  // Real-time Live Sync hook for mobile judges and admin
+  const { isOnline, isSyncing, activeJudges, triggerSync } = useLiveSync(
+    participants,
+    setParticipants
+  );
 
   // 7. Active Topic & Active Participant
   const [activeTopic, setActiveTopic] = useState<Topic | null>(null);
@@ -110,6 +169,7 @@ export default function App() {
   // 9. Modals
   const [isScorecardOpen, setIsScorecardOpen] = useState(false);
   const [isStageModeOpen, setIsStageModeOpen] = useState(false);
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
   // Persistence to localStorage
   useEffect(() => {
@@ -118,7 +178,10 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_PARTICIPANTS, JSON.stringify(participants));
-  }, [participants]);
+    if (participants.length > 0) {
+      syncParticipantsToServer(participants, schoolName);
+    }
+  }, [participants, schoolName]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(timerConfig));
@@ -131,6 +194,18 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_LANG, lang);
   }, [lang]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_SIGNATORIES, JSON.stringify(signatories));
+  }, [signatories]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_SIGNATORIES_LOCKED, isSignaturesLocked ? 'true' : 'false');
+  }, [isSignaturesLocked]);
+
+  const handleToggleLockSignatures = () => {
+    setIsSignaturesLocked(prev => !prev);
+  };
 
   // Sound toggle
   const handleToggleSound = () => {
@@ -226,14 +301,115 @@ export default function App() {
     }));
   };
 
-  // Reset all scores
-  const handleResetAllScores = () => {
-    setParticipants(prev => prev.map(p => ({
+  // Competition closed / finalized state
+  const [isCompetitionClosed, setIsCompetitionClosed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('parishath_competition_closed_v1') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const handleCloseCurrentCompetition = () => {
+    setIsCompetitionClosed(true);
+    try {
+      localStorage.setItem('parishath_competition_closed_v1', 'true');
+    } catch {}
+  };
+
+  const handleStartNewCompetition = (mode: 'sample50' | 'blank' | 'resetScoresOnly') => {
+    setIsCompetitionClosed(false);
+    try {
+      localStorage.removeItem('parishath_competition_closed_v1');
+    } catch {}
+
+    // 1. Reset all topics used status
+    const resetTopics = topics.map(t => ({ ...t, isUsed: false }));
+    setTopics(resetTopics);
+    try {
+      localStorage.setItem(STORAGE_KEY_TOPICS, JSON.stringify(resetTopics));
+    } catch {}
+
+    // 2. Clear current speaker & topic on stage
+    setActiveParticipant(null);
+    setActiveTopic(null);
+
+    // 3. Set participants based on mode
+    let newParticipants: Participant[] = [];
+    if (mode === 'sample50') {
+      newParticipants = DEFAULT_50_PARTICIPANTS.map(p => ({
+        ...p,
+        scores: undefined,
+        judgeScores: {},
+        status: 'waiting' as const,
+        assignedTopic: undefined
+      }));
+    } else if (mode === 'blank') {
+      newParticipants = [];
+    } else if (mode === 'resetScoresOnly') {
+      newParticipants = participants.map(p => ({
+        ...p,
+        scores: undefined,
+        judgeScores: {},
+        status: 'waiting' as const,
+        assignedTopic: undefined
+      }));
+    }
+
+    setParticipants(newParticipants);
+    resetScoresOnServer();
+    syncParticipantsToServer(newParticipants, schoolName);
+
+    // Navigate to spin wheel
+    setActiveTab('pick');
+  };
+
+  // Comprehensive Round Reset: Clears 4 judges marks, topic picked states, and active speakers, but strictly preserves participant names and chest numbers
+  const handleResetCompetitionRound = async () => {
+    // 1. Reset participant marks & status (Names & chest numbers preserved 100%)
+    const cleared: Participant[] = participants.map(p => ({
       ...p,
       scores: undefined,
-      judgeScores: undefined,
-      status: 'waiting'
-    })));
+      judgeScores: {},
+      status: 'waiting' as const,
+      assignedTopic: undefined
+    }));
+    setParticipants(cleared);
+    setActiveParticipant(null);
+    setActiveTopic(null);
+
+    // 2. Reset all topics isUsed status so chits become unpicked
+    const resetTopicsList: Topic[] = topics.map(t => ({
+      ...t,
+      isUsed: false
+    }));
+    setTopics(resetTopicsList);
+
+    // 3. Reset on server
+    try {
+      await resetScoresOnServer(CHIEF_ADMIN_PASSWORD);
+      await syncParticipantsToServer(cleared, schoolName);
+      await syncCurrentSpeakerToServer(null, null);
+    } catch (e) {
+      console.error('Server sync error during competition reset:', e);
+    }
+
+    // 4. Save to localStorage
+    try {
+      localStorage.setItem(STORAGE_KEY_PARTICIPANTS, JSON.stringify(cleared));
+      localStorage.setItem(STORAGE_KEY_TOPICS, JSON.stringify(resetTopicsList));
+    } catch {}
+
+    // 5. Re-open competition if closed
+    setIsCompetitionClosed(false);
+    try {
+      localStorage.setItem(STORAGE_KEY_COMPETITION_CLOSED, 'false');
+    } catch {}
+  };
+
+  // Reset all scores and sync reset across all connected judges (preserves names & chits)
+  const handleResetAllScores = () => {
+    handleResetCompetitionRound();
   };
 
   // Add Participant (supports either full Participant object or name/chest/school)
@@ -242,37 +418,66 @@ export default function App() {
     chestNo?: number,
     schoolOrClass?: string
   ) => {
-    if (typeof nameOrParticipant === 'object') {
-      setParticipants(prev => {
+    setParticipants(prev => {
+      let updated: Participant[];
+      if (typeof nameOrParticipant === 'object') {
         const exists = prev.some(p => p.id === nameOrParticipant.id || p.chestNo === nameOrParticipant.chestNo);
         if (exists) {
-          return prev.map(p => (p.chestNo === nameOrParticipant.chestNo ? nameOrParticipant : p));
+          updated = prev.map(p => (p.chestNo === nameOrParticipant.chestNo ? nameOrParticipant : p));
+        } else {
+          updated = [...prev, nameOrParticipant];
         }
-        return [...prev, nameOrParticipant];
-      });
-      return;
-    }
-    const newParticipant: Participant = {
-      id: `p-${Date.now()}`,
-      chestNo: chestNo || (participants.length + 1),
-      name: nameOrParticipant,
-      schoolOrClass: schoolOrClass || 'ಮೈಸೂರು',
-      status: 'waiting'
-    };
-    setParticipants(prev => [...prev, newParticipant]);
+      } else {
+        const newParticipant: Participant = {
+          id: `p-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          chestNo: chestNo || (prev.length + 1),
+          name: nameOrParticipant,
+          schoolOrClass: schoolOrClass || 'ಮೈಸೂರು',
+          status: 'waiting'
+        };
+        updated = [...prev, newParticipant];
+      }
+      const deduped = deduplicateParticipants(updated);
+      try {
+        localStorage.setItem(STORAGE_KEY_PARTICIPANTS, JSON.stringify(deduped));
+      } catch {}
+      syncParticipantsToServer(deduped, schoolName);
+      return deduped;
+    });
+  };
+
+  // Bulk add or replace participants list and sync directly to server
+  const handleBulkAddParticipants = (newParticipantList: Participant[], replace: boolean = false) => {
+    setParticipants(prev => {
+      const updated = replace ? newParticipantList : [...prev, ...newParticipantList];
+      const deduped = deduplicateParticipants(updated);
+      try {
+        localStorage.setItem(STORAGE_KEY_PARTICIPANTS, JSON.stringify(deduped));
+      } catch {}
+      syncParticipantsToServer(deduped, schoolName);
+      return deduped;
+    });
   };
 
   const handleUpdateParticipantName = (id: string, name: string, chestNo?: number) => {
-    setParticipants(prev => prev.map(p => {
-      if (p.id === id) {
-        return {
-          ...p,
-          name,
-          ...(chestNo !== undefined ? { chestNo } : {})
-        };
-      }
-      return p;
-    }));
+    setParticipants(prev => {
+      const updated = prev.map(p => {
+        if (p.id === id) {
+          return {
+            ...p,
+            name,
+            ...(chestNo !== undefined ? { chestNo } : {})
+          };
+        }
+        return p;
+      });
+      const deduped = deduplicateParticipants(updated);
+      try {
+        localStorage.setItem(STORAGE_KEY_PARTICIPANTS, JSON.stringify(deduped));
+      } catch {}
+      syncParticipantsToServer(deduped, schoolName);
+      return deduped;
+    });
     setActiveParticipant(prev => {
       if (prev && prev.id === id) {
         return {
@@ -287,7 +492,16 @@ export default function App() {
 
   // Delete Participant
   const handleDeleteParticipant = (id: string) => {
-    setParticipants(prev => prev.filter(p => p.id !== id));
+    recordDeletedParticipantId(id);
+    deleteParticipantOnServer(id);
+    setParticipants(prev => {
+      const updated = prev.filter(p => p.id !== id);
+      try {
+        localStorage.setItem(STORAGE_KEY_PARTICIPANTS, JSON.stringify(updated));
+      } catch {}
+      syncParticipantsToServer(updated, schoolName);
+      return updated;
+    });
     if (activeParticipant?.id === id) {
       setActiveParticipant(null);
     }
@@ -328,9 +542,17 @@ export default function App() {
     setIsScorecardOpen(true);
   };
 
-  // Load 50 participants list
+  // Load 50 participants list and sync with server
   const handleLoadSampleParticipants = () => {
     setParticipants(DEFAULT_50_PARTICIPANTS);
+    syncParticipantsToServer(DEFAULT_50_PARTICIPANTS, schoolName);
+  };
+
+  // Clear all participants for fresh live program
+  const handleClearAllParticipants = () => {
+    setParticipants([]);
+    setActiveParticipant(null);
+    syncParticipantsToServer([], schoolName);
   };
 
   // Topic Manager operations
@@ -387,7 +609,9 @@ export default function App() {
         soundEnabled={soundEnabled}
         onToggleSound={handleToggleSound}
         onOpenStageMode={() => setIsStageModeOpen(true)}
+        onOpenResetRound={() => setIsResetModalOpen(true)}
         activeParticipantCount={participants.length}
+        isCompetitionClosed={isCompetitionClosed}
       />
 
       {/* Main Content Area */}
@@ -409,6 +633,8 @@ export default function App() {
             onStartTimerWithTopic={handleStartTimerWithTopic}
             onRegisterParticipant={handleAddParticipant}
             onUpdateParticipantName={handleUpdateParticipantName}
+            onDeleteParticipant={handleDeleteParticipant}
+            onClearAllParticipants={handleClearAllParticipants}
           />
         )}
 
@@ -440,6 +666,20 @@ export default function App() {
           />
         )}
 
+        {/* Tab: Digital E-Certificates (For all registered participants) */}
+        {activeTab === 'certificates' && (
+          <CertificatePortal
+            lang={lang}
+            schoolName={schoolName}
+            participants={participants}
+            signatories={signatories}
+            onUpdateSignatories={setSignatories}
+            onDeleteParticipant={handleDeleteParticipant}
+            isSignaturesLocked={isSignaturesLocked}
+            onToggleLockSignatures={handleToggleLockSignatures}
+          />
+        )}
+
         {/* Tab 4: Admin Menu (All Final Results & Competition Management) */}
         {activeTab === 'admin' && (
           <AdminPortal
@@ -451,11 +691,13 @@ export default function App() {
             timerConfig={timerConfig}
             onUpdateTimerConfig={setTimerConfig}
             onAddParticipant={handleAddParticipant}
+            onBulkAddParticipants={handleBulkAddParticipants}
+            onUpdateParticipantName={handleUpdateParticipantName}
             onDeleteParticipant={handleDeleteParticipant}
             onSelectForSpeech={handleSelectForSpeech}
             onOpenScoreForParticipant={handleOpenScoreForParticipant}
             onLoadSampleParticipants={handleLoadSampleParticipants}
-            onClearAllParticipants={() => setParticipants([])}
+            onClearAllParticipants={handleClearAllParticipants}
             onAddTopic={handleAddTopic}
             onBulkAddTopics={handleBulkAddTopics}
             onDeleteTopic={handleDeleteTopic}
@@ -463,6 +705,17 @@ export default function App() {
             onResetToDefaultTopics={handleResetToDefaultTopics}
             onClearAllUsedStatus={handleClearAllUsedStatus}
             onResetAllScores={handleResetAllScores}
+            signatories={signatories}
+            onUpdateSignatories={setSignatories}
+            isSignaturesLocked={isSignaturesLocked}
+            onToggleLockSignatures={handleToggleLockSignatures}
+            isOnline={isOnline}
+            isSyncing={isSyncing}
+            activeJudges={activeJudges}
+            onTriggerSync={triggerSync}
+            isCompetitionClosed={isCompetitionClosed}
+            onCloseCurrentCompetition={handleCloseCurrentCompetition}
+            onStartNewCompetition={handleStartNewCompetition}
           />
         )}
       </main>
@@ -486,6 +739,15 @@ export default function App() {
         activeTopic={activeTopic}
         activeParticipant={activeParticipant}
         timerConfig={timerConfig}
+      />
+
+      {/* Safe Competition Round Reset Modal (Preserves Participant Names) */}
+      <ResetCompetitionModal
+        isOpen={isResetModalOpen}
+        onClose={() => setIsResetModalOpen(false)}
+        lang={lang}
+        onConfirmReset={handleResetCompetitionRound}
+        participantCount={participants.length}
       />
 
       {/* Footer with Parishath Branding */}

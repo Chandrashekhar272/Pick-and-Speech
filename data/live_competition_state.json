@@ -1,0 +1,283 @@
+{
+  "participants": [
+    {
+      "id": "p-1790500853990-uzmn",
+      "chestNo": 1,
+      "name": "1) ವಿದ್ಯಾವತಿ ಮಳೆಮಠ",
+      "schoolOrClass": "( TLM & ಚಿತ್ರಕಲಾ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790503137868-fesv",
+      "chestNo": 2,
+      "name": "2) ಶೆಟ್ಟಿ ಆಶಾ",
+      "schoolOrClass": "( ಮಕ್ಕಳ ಸಮಗ್ರ ವಿಕಾಸ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790503168370-gkqx",
+      "chestNo": 3,
+      "name": "3) ಕಸಪ್ಪ ಹಡಗಲಿ",
+      "schoolOrClass": "( ಸಮಾಜ ಸೇವೆ ಮತ್ತು ಆರೋಗ್ಯ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790503211796-ytmz",
+      "chestNo": 4,
+      "name": "4) ಏನ್ ಬಿ ಸಜ್ಜನ",
+      "schoolOrClass": "(ನಿರೂಪಕರು & ಭಾಷಣಕಾರರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790503285834-dimj",
+      "chestNo": 5,
+      "name": "5)ಪಾರ್ವತಿ ಬಿ ಎ",
+      "schoolOrClass": "( ಮಹಿಳಾ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790503329497-l3kx",
+      "chestNo": 6,
+      "name": "6) ರತ್ನಮ್ಮ ಡಿ",
+      "schoolOrClass": "( ಮಕ್ಕಳ ಸಮಗ್ರ ವಿಕಾಸ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790649715082-dsr4",
+      "chestNo": 7,
+      "name": "7) ಶ್ರೀಮತಿ ಆರ್ ಎಸ್ ಪಾಟೀಲ",
+      "schoolOrClass": "(ಮಕ್ಕಳ ಸಮಗ್ರ ವಿಕಾಸ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790649750021-9gxz",
+      "chestNo": 8,
+      "name": "8) ಶ್ರೀಮತಿ ಸರೋಜಮ್ಮ",
+      "schoolOrClass": "( ಮಹಿಳಾ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790649791339-cht1",
+      "chestNo": 9,
+      "name": "9) ಶ್ರೀಮತಿ ಸುಧಾ ಕೆ",
+      "schoolOrClass": "(ಕಲಾವಿದ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790649830069-feqp",
+      "chestNo": 10,
+      "name": "10) ಶ್ರೀಮತಿ ತಿಮ್ಮರಾಜು ಏನ್ ಎಮ್",
+      "schoolOrClass": "( ತಾಂತ್ರಿಕ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650013808-7jlu",
+      "chestNo": 11,
+      "name": "11) ಶ್ರೀಮತಿ ಲತಾ ಸಜ್ಜಗಾರ",
+      "schoolOrClass": "( ಮಹಿಳಾ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650056876-2118",
+      "chestNo": 12,
+      "name": "12) ಶ್ರೀಮತಿ ಅನ್ನಪೂರ್ಣ M V",
+      "schoolOrClass": "( TLM & ಚಿತ್ರಕಲಾ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650102415-5bce",
+      "chestNo": 13,
+      "name": "13) ಶ್ರೀಮತಿ ಮುದುಕಾಂಬಿ ಅಲ್ಲಸಾಬ ಬಾಗೇವಾಡಿ",
+      "schoolOrClass": "(ಕಲಾವಿದ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650142024-gxdt",
+      "chestNo": 14,
+      "name": "14) ಶ್ರೀಮತಿ ಶ್ವೇತಾ ಹೆಗಡೆ",
+      "schoolOrClass": "(ತಾಂತ್ರಿಕ ಶಿಕ್ಷಕರ ಸಮಿತಿ)",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650168213-uqh5",
+      "chestNo": 15,
+      "name": "15)ಶ್ರೀಮತಿ ಶೈಲಜಾ K V",
+      "schoolOrClass": "(ಸಂಗೀತ ಮತ್ತು ಗಾಯನ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650202789-mdx5",
+      "chestNo": 16,
+      "name": "16)ಶ್ರೀ ಶೋಭಾ S ನಾಯಕ",
+      "schoolOrClass": "( ಸಮಾಜ ಸೇವೆ ಮತ್ತು ಆರೋಗ್ಯ ಶಿಕ್ಷಣ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650229638-uvvv",
+      "chestNo": 17,
+      "name": "17)ಶ್ರೀ ಮಂಜುನಾಥ ಟಿ ಪಿ",
+      "schoolOrClass": "(ಸಮಾಜಸೇವೆ ಮತ್ತು ಆರೋಗ್ಯ ಶಿಕ್ಷಣ ಸಮಿತಿ)",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650347346-1jr4",
+      "chestNo": 18,
+      "name": "18)ಶ್ರೀಮತಿ ಮಂಜುಳ ಎಂ. ಸಿ.",
+      "schoolOrClass": "(ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ)",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650374852-gqwt",
+      "chestNo": 19,
+      "name": "19)ಶ್ರೀಮತಿ ಶಿವಮ್ಮ ಎಸ್. ಜಿ",
+      "schoolOrClass": "(ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ)",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650406367-zki8",
+      "chestNo": 20,
+      "name": "20)ಶ್ರೀ ಎಂ. ಬಿ. ಪವಾಡಶೆಟ್ಟರ",
+      "schoolOrClass": "(ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ)",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650436568-6hvg",
+      "chestNo": 21,
+      "name": "21)ಶ್ರೀಮತಿ ಶಬೀನ",
+      "schoolOrClass": "(ಮಹಿಳಾ ಶಿಕ್ಷಕಿಯರ ಸಮಿತಿ)",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650470712-dzga",
+      "chestNo": 22,
+      "name": "22)ಶ್ರೀ ಶ್ರೀಶೈಲ ಮನಗತ್ತಿ",
+      "schoolOrClass": "(ನಿರೂಪಕರು ಮತ್ತು ಭಾಷಣಕಾರರ ಸಮಿತಿ)",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650499374-mz43",
+      "chestNo": 23,
+      "name": "23)ಶ್ರೀಮತಿ ಎಸ್. ಎ ಸಂಕೇಶ್ವರ್",
+      "schoolOrClass": "(ಮಕ್ಕಳ ಸಮಗ್ರ ವಿಕಾಸ ಶಿಕ್ಷಕರ ಸಮಿತಿ)",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650523318-chii",
+      "chestNo": 24,
+      "name": "24)ಶ್ರೀ ರಮೇಶ ಎಂ.",
+      "schoolOrClass": "(ಮಕ್ಕಳ ಸಮಗ್ರ ವಿಕಾಸ ಶಿಕ್ಷಕರ ಸಮಿತಿ)",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650556522-i8lg",
+      "chestNo": 25,
+      "name": "25) ಶ್ರೀಮತಿ ತನುಜಾ ಬಿ ನಾಯಕ್.",
+      "schoolOrClass": "(ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ)",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650595447-olpt",
+      "chestNo": 26,
+      "name": "26) ಶ್ರೀಮತಿ ಶೋಭಾ N G",
+      "schoolOrClass": "( ತಾಂತ್ರಿಕ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650626227-8pt3",
+      "chestNo": 27,
+      "name": "27) ಶ್ರೀಮತಿ ನಾಗಮಣಿ S",
+      "schoolOrClass": "( ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650647550-fguq",
+      "chestNo": 28,
+      "name": "28) ಶ್ರೀಮತಿ ರತ್ನ ರಾಯಚೂರುಕರ್",
+      "schoolOrClass": "(ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650673072-xins",
+      "chestNo": 29,
+      "name": "29)ಶ್ರೀ ಆನಂದತೀರ್ಥ ರಾ ಜೋಶಿ",
+      "schoolOrClass": "( ಸಾಹಿತಿ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650700220-w8xc",
+      "chestNo": 30,
+      "name": "30)  ಶ್ರೀಮತಿ  ಸುಮಾರಾಣಿ",
+      "schoolOrClass": "( ಕಲಾವಿದ ಶಿಕ್ಷಕರ ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    },
+    {
+      "id": "p-1790650730968-fdn9",
+      "chestNo": 31,
+      "name": "31) ಶ್ರೀಮತಿ ಸವಿತಾ S G",
+      "schoolOrClass": "( TLM ಸಮಿತಿ )",
+      "status": "waiting",
+      "judgeScores": {}
+    }
+  ],
+  "currentParticipantId": null,
+  "activeTopicId": null,
+  "schoolName": "ಕರ್ನಾಟಕ ರಾಜ್ಯ ಶಿಕ್ಷಕರ ಪ್ರತಿಭಾ ಪರಿಷತ್ (ರಿ) ಮೈಸೂರು",
+  "activeJudges": {
+    "judge-1": {
+      "lastPing": 1790500080211,
+      "name": "ತೀರ್ಪುಗಾರರು 1 (Judge 1)",
+      "role": "ತೀರ್ಪುಗಾರರು 1"
+    },
+    "judge-2": {
+      "lastPing": 0,
+      "name": "ತೀರ್ಪುಗಾರರು 2 (Judge 2)",
+      "role": "ತೀರ್ಪುಗಾರರು 2"
+    },
+    "judge-3": {
+      "lastPing": 0,
+      "name": "ತೀರ್ಪುಗಾರರು 3 (Judge 3)",
+      "role": "ತೀರ್ಪುಗಾರರು 3"
+    },
+    "judge-4": {
+      "lastPing": 0,
+      "name": "ತೀರ್ಪುಗಾರರು 4 (Judge 4)",
+      "role": "ತೀರ್ಪುಗಾರರು 4"
+    },
+    "judge-chief": {
+      "lastPing": 0,
+      "name": "ಮುಖ್ಯ ತೀರ್ಪುಗಾರರು (Chief Judge)",
+      "role": "ಮುಖ್ಯ ತೀರ್ಪುಗಾರರು"
+    }
+  },
+  "lastUpdated": 1790698089424
+}

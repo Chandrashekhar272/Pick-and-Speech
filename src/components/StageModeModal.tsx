@@ -135,7 +135,9 @@ export const StageModeModal: React.FC<StageModeModalProps> = ({
           </div>
           <h1 className="text-lg sm:text-2xl font-black tracking-tight text-white mt-0.5 font-serif-kannada">
             {lang === 'kn' ? 'ಆಶುಭಾಷಣ ಸ್ಪರ್ಧೆ' : 'Aashubhashana Spardhe'}
-            <span className="text-xs font-normal text-stone-400 ml-2">({schoolName})</span>
+            {schoolName && !schoolName.includes('ಪ್ರತಿಭಾ ಪರಿಷತ್') && (
+              <span className="text-xs font-normal text-stone-400 ml-2">({schoolName})</span>
+            )}
           </h1>
         </div>
 

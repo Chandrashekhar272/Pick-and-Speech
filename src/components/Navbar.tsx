@@ -10,7 +10,8 @@ import {
   ShieldCheck,
   Bell,
   Edit2,
-  Disc
+  Disc,
+  RotateCcw
 } from 'lucide-react';
 import { Language, NavigationTab } from '../types';
 import { sound } from '../utils/audio';
@@ -23,7 +24,9 @@ interface NavbarProps {
   soundEnabled: boolean;
   onToggleSound: () => void;
   onOpenStageMode: () => void;
+  onOpenResetRound?: () => void;
   activeParticipantCount: number;
+  isCompetitionClosed?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -34,7 +37,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   soundEnabled,
   onToggleSound,
   onOpenStageMode,
-  activeParticipantCount
+  onOpenResetRound,
+  activeParticipantCount,
+  isCompetitionClosed = false
 }) => {
   const navItems = [
     {
@@ -53,6 +58,12 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'judges' as const,
       labelKn: 'ತೀರ್ಪುಗಾರರ ಲಾಗಿನ್',
       labelEn: 'Judges Menu',
+      icon: Award
+    },
+    {
+      id: 'certificates' as const,
+      labelKn: 'ಇ-ಪ್ರಮಾಣಪತ್ರಗಳು (E-Certificates)',
+      labelEn: 'E-Certificates',
       icon: Award
     },
     {
@@ -107,12 +118,35 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-stone-100 text-stone-700 px-2 py-0.5 rounded-full border border-stone-200">
                   <span>{activeParticipantCount} {lang === 'kn' ? 'ಸ್ಪರ್ಧಿಗಳು' : 'Participants'}</span>
                 </span>
+                {isCompetitionClosed ? (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-rose-100 text-rose-800 px-2.5 py-0.5 rounded-full border border-rose-300">
+                    <span>🛑 {lang === 'kn' ? 'ಸ್ಪರ್ಧೆ ಮುಕ್ತಾಯ' : 'Round Concluded'}</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                    <span>{lang === 'kn' ? 'ಲೈವ್ ಸ್ಪರ್ಧೆ' : 'Live'}</span>
+                  </span>
+                )}
               </div>
             </div>
           </div>
 
           {/* Action Tools */}
-          <div className="flex items-center gap-2 self-end md:self-auto">
+          <div className="flex items-center gap-2 self-end md:self-auto flex-wrap">
+            {/* Reset Competition Round (Preserves Names) */}
+            {onOpenResetRound && (
+              <button
+                id="header-reset-round-btn"
+                onClick={onOpenResetRound}
+                title={lang === 'kn' ? 'ಸ್ಪರ್ಧಾ ಅಂಕಗಳು & ಚೀಟಿಗಳ ಮರುಹೊಂದಿಕೆ (ಹೆಸರುಗಳು ಉಳಿಯುತ್ತವೆ)' : 'Reset Scores & Chits (Preserves Names)'}
+                className="px-2.5 py-1.5 text-xs font-bold text-amber-950 bg-gradient-to-r from-amber-100 to-amber-200 hover:from-amber-200 hover:to-amber-300 border-2 border-amber-300 rounded-xl transition flex items-center gap-1.5 shadow-2xs font-serif-kannada"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-amber-800" />
+                <span className="font-bold">{lang === 'kn' ? 'ಮರುಹೊಂದಿಕೆ' : 'Reset Round'}</span>
+              </button>
+            )}
+
             {/* Test Bell */}
             <button
               id="test-bell-button"

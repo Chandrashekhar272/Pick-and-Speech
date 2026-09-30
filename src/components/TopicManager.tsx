@@ -41,6 +41,7 @@ export const TopicManager: React.FC<TopicManagerProps> = ({
   const [selectedLevel, setSelectedLevel] = useState<DifficultyLevel | 'all'>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);
+  const [confirmResetTopics, setConfirmResetTopics] = useState(false);
 
   // Add Single Topic State
   const [titleKn, setTitleKn] = useState('');
@@ -155,17 +156,33 @@ export const TopicManager: React.FC<TopicManagerProps> = ({
             <span>{lang === 'kn' ? 'ಹೊಸ ವಿಷಯ ಸೇರಿಸಿ' : 'Add Single Topic'}</span>
           </button>
 
-          <button
-            onClick={() => {
-              if (window.confirm(lang === 'kn' ? 'ಆರಂಭಿಕ ೩೦ ವಿಷಯಗಳಿಗೆ ಮರುಹೊಂದಿಸಬೇಕೇ?' : 'Reset to default 30 topics?')) {
-                onResetToDefault();
-              }
-            }}
-            className="p-2 rounded-xl text-xs text-stone-400 hover:text-stone-700 hover:bg-stone-100 border border-stone-200 transition"
-            title={lang === 'kn' ? 'ಡೀಫಾಲ್ಟ್ ವಿಷಯಗಳಿಗೆ ಮರುಹೊಂದಿಸಿ' : 'Reset to Defaults'}
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
+          {confirmResetTopics ? (
+            <div className="flex items-center gap-1 animate-in fade-in">
+              <button
+                onClick={() => {
+                  onResetToDefault();
+                  setConfirmResetTopics(false);
+                }}
+                className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-xs transition"
+              >
+                {lang === 'kn' ? 'ಖಚಿತ' : 'Confirm'}
+              </button>
+              <button
+                onClick={() => setConfirmResetTopics(false)}
+                className="px-1.5 py-1.5 rounded-xl text-xs bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold"
+              >
+                ✕
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmResetTopics(true)}
+              className="p-2 rounded-xl text-xs text-stone-400 hover:text-stone-700 hover:bg-stone-100 border border-stone-200 transition"
+              title={lang === 'kn' ? 'ಡೀಫಾಲ್ಟ್ ವಿಷಯಗಳಿಗೆ ಮರುಹೊಂದಿಸಿ' : 'Reset to Defaults'}
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
 

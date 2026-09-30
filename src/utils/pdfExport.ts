@@ -106,7 +106,7 @@ export async function generateFinalResultsPDF({
     month: 'long',
     day: 'numeric'
   });
-  ctx.fillText(`ಸ್ಥಳ / ಶಾಲೆ: ${schoolName}  |  ದಿನಾಂಕ: ${todayStr}`, canvasWidth / 2, currentY);
+  ctx.fillText(`ಸ್ಥಳ: ${schoolName}  |  ದಿನಾಂಕ: ${todayStr}`, canvasWidth / 2, currentY);
 
   currentY += 15;
   // Header divider
@@ -213,23 +213,22 @@ export async function generateFinalResultsPDF({
     currentY += podiumBoxHeight + 25;
   }
 
-  // 5. Results Table
+  // 5. Results Table (Showing 4 Judges Individual Scores & Final Total)
   const tableX = 60;
   const tableWidth = canvasWidth - 120;
   const rowHeight = 38;
 
-  // Table Column definitions
+  // Table Column definitions: 4 Judges scores + Consolidated Total
   const columns = [
     { title: 'ಶ್ರೇಯಾಂಕ', width: 75, align: 'center' },
     { title: 'ಚೆಸ್ಟ್ ನಂ', width: 75, align: 'center' },
-    { title: 'ಸ್ಪರ್ಧಿಯ ಹೆಸರು (Name)', width: 220, align: 'left' },
-    { title: 'ಶಾಲೆ / ತರಗತಿ', width: 190, align: 'left' },
-    { title: 'ವಿಷಯ (10)', width: 80, align: 'center' },
-    { title: 'ಭಾಷೆ (10)', width: 80, align: 'center' },
-    { title: 'ಹಾವಭಾವ (10)', width: 90, align: 'center' },
-    { title: 'ಸಮಯ (10)', width: 80, align: 'center' },
-    { title: 'ಪ್ರಭಾವ (10)', width: 80, align: 'center' },
-    { title: 'ಒಟ್ಟು (50)', width: 90, align: 'center' }
+    { title: 'ಶಿಕ್ಷಕರ ಹೆಸರು (Name)', width: 230, align: 'left' },
+    { title: 'ಸಂಸ್ಥೆ / ಸ್ಥಳ', width: 180, align: 'left' },
+    { title: 'ತೀರ್ಪು ೧ (50)', width: 110, align: 'center' },
+    { title: 'ತೀರ್ಪು ೨ (50)', width: 110, align: 'center' },
+    { title: 'ತೀರ್ಪು ೩ (50)', width: 110, align: 'center' },
+    { title: 'ತೀರ್ಪು ೪ (50)', width: 110, align: 'center' },
+    { title: 'ಅಂತಿಮ ಒಟ್ಟು', width: 120, align: 'center' }
   ];
 
   // Draw Table Header
@@ -267,6 +266,13 @@ export async function generateFinalResultsPDF({
       const s = p.scores!;
       const isTop3 = rank <= 3;
 
+      // Extract 4 judges scores
+      const j1 = p.judgeScores?.['judge-1']?.total;
+      const j2 = p.judgeScores?.['judge-2']?.total;
+      const j3 = p.judgeScores?.['judge-3']?.total;
+      const j4 = p.judgeScores?.['judge-4']?.total;
+      const finalTotal = s.total;
+
       // Alternating row background
       ctx.fillStyle = isTop3 ? '#fefce8' : index % 2 === 0 ? '#ffffff' : '#f8fafc';
       ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
@@ -282,12 +288,11 @@ export async function generateFinalResultsPDF({
         { text: `#${p.chestNo}`, align: 'center', bold: true, color: '#92400e' },
         { text: p.name, align: 'left', bold: true, color: '#0f172a' },
         { text: p.schoolOrClass || '-', align: 'left', bold: false, color: '#475569' },
-        { text: `${s.content}`, align: 'center', bold: false },
-        { text: `${s.language}`, align: 'center', bold: false },
-        { text: `${s.presentation}`, align: 'center', bold: false },
-        { text: `${s.timeManagement}`, align: 'center', bold: false },
-        { text: `${s.impact}`, align: 'center', bold: false },
-        { text: `${s.total}`, align: 'center', bold: true, color: '#b45309' }
+        { text: j1 !== undefined ? `${j1}` : '-', align: 'center', bold: j1 !== undefined, color: j1 !== undefined ? '#1e293b' : '#94a3b8' },
+        { text: j2 !== undefined ? `${j2}` : '-', align: 'center', bold: j2 !== undefined, color: j2 !== undefined ? '#1e293b' : '#94a3b8' },
+        { text: j3 !== undefined ? `${j3}` : '-', align: 'center', bold: j3 !== undefined, color: j3 !== undefined ? '#1e293b' : '#94a3b8' },
+        { text: j4 !== undefined ? `${j4}` : '-', align: 'center', bold: j4 !== undefined, color: j4 !== undefined ? '#1e293b' : '#94a3b8' },
+        { text: `${finalTotal}`, align: 'center', bold: true, color: '#b45309' }
       ];
 
       cells.forEach((cell, cellIdx) => {
@@ -317,7 +322,7 @@ export async function generateFinalResultsPDF({
 
   currentY += 45;
 
-  // 6. Official Signatures Section
+  // 6. Official Signatures Section (6 Dignitaries: Chief Judge, Judge 1-4, President)
   const sigBoxY = Math.max(currentY, canvasHeight - 200);
 
   ctx.strokeStyle = '#d6d3d1';
@@ -327,14 +332,15 @@ export async function generateFinalResultsPDF({
   ctx.lineTo(canvasWidth - 60, sigBoxY - 20);
   ctx.stroke();
 
-  const sigColWidth = (canvasWidth - 120) / 5;
+  const sigColWidth = (canvasWidth - 120) / 6;
 
   const judgesList = [
-    { title: 'ಮುಖ್ಯ ತೀರ್ಪುಗಾರರು', sub: '೧. ತೀರ್ಪುಗಾರರು - ೧' },
-    { title: 'ಸಹ ತೀರ್ಪುಗಾರರು', sub: '೨. ತೀರ್ಪುಗಾರರು - ೨' },
-    { title: 'ಸಹ ತೀರ್ಪುಗಾರರು', sub: '೩. ತೀರ್ಪುಗಾರರು - ೩' },
-    { title: 'ಸಹ ತೀರ್ಪುಗಾರರು', sub: '೪. ತೀರ್ಪುಗಾರರು - ೪' },
-    { title: 'ಅಧ್ಯಕ್ಷರು / ಸಂಚಾಲಕರು', sub: 'ಶಿಕ್ಷಕರ ಪ್ರತಿಭಾ ಪರಿಷತ್' }
+    { title: 'ಮುಖ್ಯ ತೀರ್ಪುಗಾರರು', sub: 'ಮುಖ್ಯ ತೀರ್ಪು' },
+    { title: 'ತೀರ್ಪುಗಾರರು ೧', sub: 'ತೀರ್ಪುಗಾರರು - ೧' },
+    { title: 'ತೀರ್ಪುಗಾರರು ೨', sub: 'ತೀರ್ಪುಗಾರರು - ೨' },
+    { title: 'ತೀರ್ಪುಗಾರರು ೩', sub: 'ತೀರ್ಪುಗಾರರು - ೩' },
+    { title: 'ತೀರ್ಪುಗಾರರು ೪', sub: 'ತೀರ್ಪುಗಾರರು - ೪' },
+    { title: 'ರಾಜ್ಯಾಧ್ಯಕ್ಷರು / ಸಂಚಾಲಕರು', sub: 'ಶಿಕ್ಷಕರ ಪ್ರತಿಭಾ ಪರಿಷತ್' }
   ];
 
   judgesList.forEach((j, idx) => {
@@ -346,8 +352,8 @@ export async function generateFinalResultsPDF({
 
     ctx.strokeStyle = '#78716c';
     ctx.beginPath();
-    ctx.moveTo(60 + sigColWidth * idx + 15, sigBoxY + 70);
-    ctx.lineTo(60 + sigColWidth * (idx + 1) - 15, sigBoxY + 70);
+    ctx.moveTo(60 + sigColWidth * idx + 10, sigBoxY + 70);
+    ctx.lineTo(60 + sigColWidth * (idx + 1) - 10, sigBoxY + 70);
     ctx.stroke();
 
     ctx.font = '11px "Segoe UI", Arial, sans-serif';
